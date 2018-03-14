@@ -1,0 +1,1 @@
+These repo majorly consists of the updated web development notes which I've noted so far.
