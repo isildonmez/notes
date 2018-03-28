@@ -99,6 +99,71 @@ So far, we've seen that *URL*s, *verbs* and *status codes* make up the fundament
 
 ![http1-req-res-details](images/http1-req-res-details.png)
 
+The HTTP specification states that a request or response message has the following generic structure:
+
+```
+message = <start-line>
+          *(<message-header>)
+          CRLF
+          [<message-body>]
+
+<start-line> = Request-Line | Status-Line
+<message-header> = Field-Name ':' Field-Value
+```
+
+It's mandatory to place a new line between the message headers and body. The message can contain one or more headers, of which are broadly classified into:
+
+- [general headers](http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5): that are applicable for both request and response messages.
+- [request specific headers](http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.3).
+- [response specific headers](http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.2).
+- [entity headers](http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1).
+
+
+The message body may contain the complete entity data, or it may be piecemeal if the chunked encoding (`Transfer-Encoding: chunked`) is used. All HTTP/1.1 clients are required to accept the `Transfer-Encoding` header.
+
+#### General Headers
+
+There are a few headers (general headers) that are shared by both request and response messages.
+
+#### Entity Headers
+
+Request and Response messages may also include entity headers to provide meta-information about the the content (aka Message Body or Entity).
+
+> Custom headers can also be created and sent by the client; they will be treated as entity headers by the HTTP protocol.
+
+### Request Format
+
+A typical request message might look like:
+
+```
+GET /articles/http-basics HTTP/1.1
+Host: www.articles.com
+Connection: keep-alive
+Cache-Control: no-cache
+Pragma: no-cache
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+```
+
+Note the request line followed by many request headers. The **Host** header is mandatory for HTTP/1.1 clients. **GET** requests do not have a message body, but **POST** requests can contain the post data in the body.
+
+#### Response Format
+
+The response format is similar to the request message, except for the status line and headers. The status line has the following structure:
+
+```
+Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase
+```
+
+- `SP` is the space separator between the tokens.
+- HTTP-Version is sent as `HTTP/1.1`
+- The Status-Code is one of the many statuses discussed earlier.
+- The Reason-Phrase is a human-readable version of the status code.
+
+A typical status line for a successful response might look like so:
+
+```
+HTTP/1.1 200 OK
+```
 
 
 
