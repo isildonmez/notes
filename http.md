@@ -165,6 +165,56 @@ A typical status line for a successful response might look like so:
 HTTP/1.1 200 OK
 ```
 
+## Tools to View HTTP Traffic
+
+Undoubtedly, the [Chrome/Webkit inspector](https://developers.google.com/chrome-developer-tools/) is a favorite amongst web developers:
+
+For the command line, we have utilities like [curl](http://curl.haxx.se/), [tcpdump](http://www.tcpdump.org/) and [tshark](http://www.wireshark.org/docs/wsug_html_chunked/AppToolstshark.html) for monitoring HTTP traffic.
+
+## Using HTTP in Web Frameworks and Libraries
+
+Now that we have looked at the request/response messages, it's time that we learn how libraries and frameworks expose it in the form of an API. We'll use *ExpressJS for Node, Ruby on Rails,* and *jQuery Ajax* as our examples.
+
+### ExpressJS
+
+If you are building web servers in NodeJS, chances are high that you've considered [ExpressJS](http://expressjs.com/). ExpressJS was originally inspired by a Ruby Web framework, called Sinatra. As expected, the API is also equally influenced.
+
+> For detailed information please visit the `ExpressJs` section in [this link](https://code.tutsplus.com/tutorials/http-the-protocol-every-web-developer-must-know-part-1--net-31177)
+
+### Ruby on Rails
+
+*The request and response messages are mostly the same, except for the first line and message headers.*
+
+In Rails, the [ActionController](http://api.rubyonrails.org/) and [ActionDispatch](http://api.rubyonrails.org/) modules provide the API for handling request and response messages.
+
+**ActionController** provides a high level API to read the request URL, render output and redirect to a different end-point. An end-point (aka route) is handled as an action method. Most of the necessary context information inside an action-method is provided via the `request`, `response` and `params` objects.
+
+- [params](http://api.rubyonrails.org/classes/ActionController/Metal.html#method-i-params): gives access to the URL parameters and POST data.
+- [request](http://api.rubyonrails.org/classes/ActionDispatch/Request.html): contains information about the client, headers and URL.
+- [response](http://api.rubyonrails.org/classes/ActionDispatch/Response.html): used to set headers and status codes.
+- [render](http://api.rubyonrails.org/classes/AbstractController/Rendering.html#method-i-render): render views by expanding templates.
+- [redirect_to](http://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to): redirect to a different action-method or URL.
+
+
+**ActionDispatch** provides fine-grained access to the request/response messages, via the [ActionDispatch::Request](http://api.rubyonrails.org/classes/ActionDispatch/Request.html) and [ActionDispatch::Response](http://api.rubyonrails.org/classes/ActionDispatch/Response.html) classes. It exposes a set of query methods to check the type of request (`get?()`, `post?()`, `head?()`, `local?()`). Request headers can be directly accessed via the `request.headers()` method.
+
+On the response side, it provides methods to set `cookies()`, `location=()` and `status=()`. If you feel adventurous, you can also set the `body=()` and bypass the Rails rendering system.
+
+### jQuery Ajax
+
+Because jQuery is primarily a client-side library, its Ajax API provides the opposite of a server-side framework. In other words, it allows you to read response messages and modify request messages. jQuery exposes a simple API via [jQuery.ajax(settings)](http://api.jquery.com/jQuery.ajax/).
+
+> Please check [this link](https://code.tutsplus.com/tutorials/http-the-protocol-every-web-developer-must-know-part-1--net-31177) for more details.
+
+
+
+
+
+
+
+
+
+
 
 
 
