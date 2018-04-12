@@ -17,7 +17,11 @@ Once a request from a browser comes into your application, at the most basic lev
 
 To characterize the three (badly), the model is the supersmart geek in the back room, the controller is the social middleman that talks to everyone but doesn’t really do anything too intensive (it asks the model in those cases), and the view just looks pretty and waits to get its outfit from the controller.
 
+-----------
+
 > From [an article in betterexplained](https://betterexplained.com/articles/intermediate-rails-understanding-models-views-and-controllers/)
+
+## Intermediate Rails: Understanding Models, Views and Controllers
 
 Here’s the big picture as I understand it:
 
@@ -36,3 +40,106 @@ Here’s the big picture as I understand it:
 - The controller returns the response body (HTML, XML, etc.) & metadata (caching headers, redirects) to the server. The server combines the raw data into a proper HTTP response and sends it to the user.
 
 Many MVC discussions ignore the role of the web server. However, it’s important to mention how the controller magically gets created and passed user information. The web server is the invisible gateway, shuttling data back and forth: users never interact with the controller directly.
+
+### SuperModels
+
+Here’s a few model tips:
+
+#### Using ActiveRecord
+
+```
+class User < ActiveRecord::Base
+end
+```
+
+Ruby can also handle “undefined” methods with ease. ActiveRecord allows methods like “find_by_login”, which don’t actually exist. When you call “find_by_login”, Rails handles the “undefined method” call and searches for the “login” field. Assuming the field is in your database, the model will do a query based on the “login” field. There’s no configuration glue required.
+
+
+#### Using Attributes
+
+- ActiveRecord grabs the database fields and throws them in an `attributes` array. It makes default getters and setters, but you need to call `user.save` to save them.
+- If you want to **override** the default getter and setter, use this:
+
+```
+# ActiveRecord: override how we access field
+def length=(minutes)
+  self[:length] = minutes * 60
+end
+
+def length
+  self[:length] / 60
+end
+```
+
+ActiveRecord defines a “`[]`” method to access the raw attributes (wraps the write_attribute and read_attribute). This is how you change the raw data. You can’t redefine length using
+
+```
+def length          # this is bad
+  length / 60
+end
+```
+because it’s an infinite loop (and that’s no fun). So `self[]` it is.
+
+#### Making new Models
+
+There’s two ways to create new objects:
+
+```
+joe = User.new( :name => "Sad Joe" )        # not saved
+bob = User.create ( :name => "Happy Bob" )  # saved
+```
+
+- `new` does not save to the database: you must call `user.save` explicitly. Method `save` can fail if the model is not valid.
+- `User.create` makes a new model and saves it to the database. Validation can fail; `user.errors` is a hash of the fields with errors and the detailed message.
+
+With Ruby’s brace magic, `{}` is not explicitly needed so
+
+```
+user = User.new( :name => "kalid", :site => "instacalc.com" )
+```
+
+becomes
+
+```
+User.new( {:name => "kalid", :site => "instacalc.com"} )
+```
+
+#### Using Associations
+
+Suppose users have a “status”: active, inactive, pensive, etc. What’s the right association?
+
+```
+class User < ActiveRecord::Base
+  belongs_to :status  # this?
+  has_one :status     # or this?
+end
+```
+
+Hrm. Most likely, you want `belongs_to :status`. Yeah, it sounds weird. Don’t think about the phrase “has_one” and “belongs_to”, consider the meaning:
+
+- belongs_to: **links_to** another table. Each user references (links to) a status.
+- has_one: **linked_from** another table. A status is linked_from a user. In fact, statuses don’t even know about users – there’s no mention of a “user” in the statuses table at all. Inside class Status we’d write  has_many :users (has_one and has_many are the same thing – has_one only returns 1 object that links_to this one).
+
+These associations actually define methods used to lookup items of the other class. For example, “user belongs_to status” means that `user.status` queries the Status for the proper status_id. Also, “status has_many :users” means that `status.users` queries the user table for everyone with the current `status_id`.
+
+#### Using Custom Associations
+
+Suppose I need two statuses, primary and secondary? Use this:
+
+```
+belongs_to :primary_status, :model => 'Status', :foreign_key => 'primary_status_id'
+belongs_to :secondary_status, :model => 'Status', :foreign_key => 'secondary_status_id'
+```
+
+You define a new field, and explicitly reference the model and foreign key to use for lookups. For example, user.primary_status returns a Status object with the id of “primary_status_id”.
+
+### Quick Controllers
+
+This section is short, because controllers shouldn’t do much besides boss the model and view around. They typically:
+
+- Handle things like sessions, logins/authorization, filters, redirection, and errors.
+- 
+
+
+
+
