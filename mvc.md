@@ -138,7 +138,29 @@ You define a new field, and explicitly reference the model and foreign key to us
 This section is short, because controllers shouldn’t do much besides boss the model and view around. They typically:
 
 - Handle things like sessions, logins/authorization, filters, redirection, and errors.
-- 
+- Have default methods (added by ActionController). Visiting `http://localhost:3000/user/show` will attempt to call the “show” action if there is one, or automatically render show.rhtml if the action is not defined.
+- Pass instance variables like @user get passed to the view.
+- Are hard to debug. Use `render :text => "Error found"` and return to do printf-style debugging in your page. This is another good reason to put code in models, which are easy to debug from the console.
+- Use sessions to store data between requests: session[:variable] = “data”.
+
+### Using Views
+
+Views are straightforward. The basics:
+
+- Controller actions use views with the same name (method `show` loads  `show.rhtml` by default)
+- Controller instance variables (@foo) are available in all views and partials (wow!)
+
+Run code in a view using ERB:
+
+- `<% ... %>`: Run the code, but don’t print anything. Used for if/then/else/end and array.each loops.
+- `<%- ...  %>`: Run the code, and don’t print the trailing newline. Use this when generating XML or JSON when breaking up .rhtml code blocks for your readability, but don’t want newlines in the output.
+- `<%= ... %>`: Run the code and print the return value, for example: `<%= @foo %>`
+- `<%= h ... %>`
+
+
+
+
+
 
 
 
