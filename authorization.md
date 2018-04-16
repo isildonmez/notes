@@ -1,0 +1,5 @@
+> From [Odin Project's curriculum](https://www.theodinproject.com/courses/ruby-on-rails/lessons/a-railsy-web-refresher)
+
+Authorization is the partner concept to Authentication… Authentication lets you determine WHO the user is, but the idea behind authorization is that you might limit what the person can see based on their permission level. The most common case of this is actually the distinction between a random not-logged-in user and one who is logged in. Another common case of this is the difference between regular users of a website and the admin users who have special privileges.
+
+On the server side, you will end up writing (or using) methods which restrict access to certain types of actions based on who the current user is (or whether the requester is logged in at all). Again, Devise will help you with this by providing some of these helper methods (like for checking whether any user is logged in or who the current user is) for you.
