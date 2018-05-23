@@ -1,4 +1,4 @@
-# From toy_project from [Michael Hartl's book](https://www.railstutorial.org/book/toy_app)
+### From toy_project from [Michael Hartl's book](https://www.railstutorial.org/book/toy_app)
 
 ------------
 
@@ -68,6 +68,29 @@ In `application_record.rb`
 class ApplicationRecord < ActiveRecord::Base
 ...
 ```
+
+---------
+
+### From Michael Hartl's [rails tutorial](https://www.railstutorial.org/book/static_pages)
+
+-  **Undoing Things:**
+	```
+	$ rails generate controller StaticPages home help
+  	$ rails destroy  controller StaticPages home help
+
+  	$ rails generate model User name:string email:string
+  	$ rails destroy model User
+
+  	$ rails db:migrate
+  	# We can undo a single migration step using
+	$ rails db:rollback
+	# To go all the way back to the beginning, we can use
+	$ rails db:migrate VERSION=0
+	```
+	As you might guess, substituting any other number for `0` migrates to that version number, where the version numbers come from listing the migrations sequentially.
+
+
+
 
 
 

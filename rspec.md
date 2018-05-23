@@ -624,13 +624,198 @@ run `rspec --init` in your terminal
 that will generate a `spec_helper.rb` file and a `spec/` folder
 then move your `caesar_spec.rb` into the generated `spec` folder.
 
+### From Michael Hartl's [rails tutorial](https://www.railstutorial.org/book/static_pages)
+
+In practice, we’ll usually write controller and model tests first and integration tests (which test functionality across models, views, and controllers) second. And when we’re writing application code that isn’t particularly brittle or error-prone, or is likely to change (as is often the case with views), we’ll often skip testing altogether.
+
+We’ll write simple tests for each of the titles by combining the tests with the `assert_select` method, which lets us test for the presence of a particular HTML tag (sometimes called a “selector”, hence the name):
+
+```
+assert_select "title", "Home | Ruby on Rails Tutorial Sample App"
+```
+In particular, the code above checks for the presence of a `<title>` tag containing the string “Home | Ruby on Rails Tutorial Sample App”.
+
+```
+# test/controllers/static_pages_controller_test.rb
+
+require 'test_helper'
+
+class StaticPagesControllerTest < ActionDispatch::IntegrationTest
+
+  test "should get home" do
+    get static_pages_home_url
+    assert_response :success
+    assert_select "title", "Home | Ruby on Rails Tutorial Sample App"
+  end
+
+  test "should get help" do
+    get static_pages_help_url
+    assert_response :success
+    assert_select "title", "Help | Ruby on Rails Tutorial Sample App"
+  end
+
+  test "should get about" do
+    get static_pages_about_url
+    assert_response :success
+    assert_select "title", "About | Ruby on Rails Tutorial Sample App"
+  end
+end
+
+```
+
+The base title, “Ruby on Rails Tutorial Sample App”, is the same for every title test. Using the special function `setup`, which is automatically run before every test, verify that the tests are still green.
+
+```
+require 'test_helper'
+
+class StaticPagesControllerTest < ActionDispatch::IntegrationTest
+
+  def setup
+    @base_title = "Ruby on Rails Tutorial Sample App"
+  end
+
+  test "should get home" do
+    get static_pages_home_url
+    assert_response :success
+    assert_select "title", "Home | #{@base_title}"
+  end
+
+  ...
+end
+
+```
+
+The technique involves using *embedded Ruby* in our views. Since the Home, Help, and About page titles have a variable component, we’ll use a special Rails function called `provide` to set a different title on each page. We can see how this works by replacing the literal title “Home” in the `home.html.erb` view with the code in the following
+
+```
+# app/views/static_pages/home.html.erb
+
+<% provide(:title, "Home") %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= yield(:title) %> | Ruby on Rails Tutorial Sample App</title>
+  </head>
+  <body>
+    <h1>Sample App</h1>
+    <p>
+      This is the home page for the
+      <a href="http://www.railstutorial.org/">Ruby on Rails Tutorial</a>
+      sample application.
+    </p>
+  </body>
+</html>
+```
+This is our first example of embedded Ruby, also called *ERb*. (Now you know why HTML views have the file extension .html.erb.) ERb is the primary template system for including dynamic content in web pages. The code
+
+```
+<% provide(:title, "Home") %>
+```
+indicates using `<% ... %>` that Rails should call the `provide` function and associate the string `"Home"` with the label `:title`. Then, in the title, we use the closely related notation `<%= ... %>` to insert the title into the template using Ruby’s `yield` function:
+
+(The distinction between the two types of embedded Ruby is that `<% ... %>` *executes* the code inside, while `<%= ... %>` executes it and *inserts* the result into the template.) The resulting page is exactly the same as before, only now the variable part of the title is generated dynamically by ERb.
 
 
+### Advanced testing setup
 
+#### minitest reporters
 
+To get the default Rails tests to show red and green at the appropriate times, I recommend adding the code below to your test helper file, thereby making use of the [minitest-reporters](https://github.com/kern/minitest-reporters) gem included in Gemfile.
 
+```
+# test/test_helper.rb
 
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require "minitest/reporters"
+Minitest::Reporters.use!
 
+class ActiveSupport::TestCase
+  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
+  fixtures :all
 
+  # Add more helper methods to be used by all tests here...
+end
+```
+
+> The code above mixes single- and double-quoted strings. This is because `rails new` generates single-quoted strings, whereas the minitest reporters documentation uses double-quoted strings. This mixing of the two string types is common in Ruby.
+
+#### Guard
+
+One annoyance associated with using the `rails test` command is having to switch to the command line and run the tests by hand. To avoid this inconvenience, we can use [Guard](https://github.com/guard/guard) to automate the running of the tests. Guard monitors changes in the filesystem so that, for example, when we change the static_pages_controller_test.rb file, only those tests get run. Even better, we can configure Guard so that when, say, the home.html.erb file is modified, the static_pages_controller_test.rb automatically runs.
+
+After making Gemfile include the `guard` gem, to get started we need to initialize it:
+
+```
+$ bundle exec guard init
+Writing new Guardfile to /home/ec2-user/environment/sample_app/Guardfile
+00:51:32 - INFO - minitest guard added to Guardfile, feel free to edit it
+```
+
+We then edit the resulting `Guardfile` so that Guard will run the right tests when the integration tests and views are updated. (For maximum flexibility, I recommend using the version of the Guardfile listed in the [reference](http://railstutorial.org/guardfile) application).
+Here is the line:
+
+```
+# A custom Guardfile
+
+guard :minitest, spring: "bin/rails test", all_on_start: false do
+```
+
+This line causes Guard to use the Spring server supplied by Rails to speed up loading times, while also preventing Guard from running the full test suite upon starting.
+
+To prevent conflicts between Spring and Git when using Guard, you should add the `spring/` directory to the `.gitignore` file used by Git to determine what to ignore when adding files or directories to the repository.
+
+```
+#  Adding Spring to the .gitignore file.
+
+...
+
+# Ignore Spring files.
+/spring/*.pid
+
+```
+
+The Spring server is still a little quirky as of this writing, and sometimes Spring *processes* will accumulate and slow performance of your tests. If your tests seem to be getting unusually sluggish, it’s thus a good idea to inspect the system processes and kill them if necessary
+
+> **Unix Processes**
+
+> On Unix-like systems such as Linux and macOS, user and system tasks each take place within a well-defined container called a *process*. To see all the processes on your system, you can use the `ps` command with the `aux` options:
+
+  ```
+  $ ps aux
+
+  $ ps aux | grep spring
+  ec2-user 12241 0.3 0.5 589960 178416 ? Ssl Sep20 1:46
+  spring app | sample_app | started 7 hours ago
+  ```
+
+> The result shown gives some details about the process, but the most important thing is the first number, which is the *process id*, or pid. To eliminate an unwanted process, use the `kill` command to issue the Unix termination signal (which [happens to be 15](https://en.wikipedia.org/wiki/Unix_signal)) to the pid:
+
+  ```
+  $ kill -15 12241
+  ```
+
+> This is the technique I recommend for killing individual processes, such as a rogue Rails server (with the pid found via `ps aux | grep server`), but sometimes it’s convenient to kill all the processes matching a particular process name, such as when you want to kill all the `spring` processes gunking up your system. In this particular case, you should first try stopping the processes with the `spring` command itself:
+
+  ```
+  $ spring stop
+  ```
+
+> Sometimes this doesn’t work, though, and you can kill all the processes with name `spring` using the `pkill` command as follows:
+
+  ```
+  $ pkill -15 -f spring
+  ```
+
+> Any time something isn’t behaving as expected or a process appears to be frozen, it’s a good idea to run ps aux to see what’s going on, and then run `kill -15 <pid> or pkill -15 -f <name>` to clear things up.
+
+> Once Guard is configured, you should open a new terminal and run it at the command line as follows:
+
+```
+bundle exec guard
+```
+
+> To run *all* the tests, hit return at the `guard>` prompt. (This may sometimes give an error indicating a failure to connect to the Spring server. To fix the problem, just hit return again.)To exit Guard, press Ctrl-D.
 
 
