@@ -73,6 +73,96 @@ HAVING posts_written >= 10;
 
 For instance, if you want all the unique names of your users, you COULD just grab the whole list from your database using SQL like `SELECT users.name FROM users` (which Active Record will do for you with `User.select(:name)`) then remove duplicates using Ruby’s `#uniq` method, e.g. `User.select(:name).uniq`… but that requires you to pull all that data out of your database and then put it into memory and then iterate through it using Ruby. Use `SELECT DISTINCT users.name FROM users` instead to have SQL do it all in one step.
 
+------------
+
+> From [SQL Teaching](https://www.sqlteaching.com/)
+
+![current_table](images/db_cur_table.png)
+```
+# returns just the name and species columns
+SELECT name, species FROM family_members;
+# returns all of the rows that refer to dogs
+SELECT * FROM family_members WHERE species = 'dog';
+```
+
+![table](images/db_fr_of_pickles.png)
+
+```
+# finds all of Pickles' friends that are dogs and under the height of 45cm
+SELECT * FROM friends_of_pickles WHERE species = 'dog' AND height_cm < 45;
+# returns the rows that are not cats or dogs
+SELECT * FROM friends_of_pickles WHERE species NOT IN ('cat', 'dog');
+# returns a list of the distinct species of animals greater than 50cm in height
+SELECT DISTINCT species FROM friends_of_pickles WHERE height_cm > 50;
+# sorts the friends_of_pickles by height_cm in descending order
+SELECT * FROM friends_of_pickles ORDER BY height_cm DESC;
+# return the single row (and all columns) of the tallest friends_of_pickles(Some variants of SQL do not use the `LIMIT` keyword.
+)
+SELECT * FROM friends_of_pickles ORDER BY height_cm DESC LIMIT 1;
+# returns the number of rows in friends_of_pickles where the species is a dog
+SELECT COUNT(*) FROM friends_of_pickles WHERE species = 'dog';
+# finds the total num_books_read made by this family
+SELECT SUM(num_books_read) FROM family_members;
+# finds the average num_books_read made by each family member
+SELECT AVG(num_books_read) FROM family_members;
+# find the highest num_books_read that a family member makes
+SELECT MAX(num_books_read) FROM family_members;
+# returns the tallest height for each species
+SELECT MAX(height_cm), species FROM friends_of_pickles GROUP BY species;
+# returns the family members that have the highest num_books_read
+SELECT * FROM family_members WHERE num_books_read = (SELECT MAX(num_books_read) FROM family_members);
+# returns all of the rows of family_members where favorite_book is not null
+SELECT * FROM family_members WHERE favorite_book IS NOT NULL;
+```
+
+![table](images/db_celebs_born.png)
+
+```
+# returns a list of celebrities that were born after September 1st, 1980
+SELECT * FROM celebs_born WHERE birthdate > '1980-09-01';
+```
+
+![table](images/db_character.png)
+
+```
+# an inner join to pair each character name with the actor who plays them
+SELECT character.name, character_actor.actor_name
+FROM character 
+INNER JOIN character_actor 
+ON character.id = character_actor.character_id;
+```
+
+![table](images/db_character_2.png)
+
+```
+# pairs each character name with the actor who plays them
+SELECT character.name, actor.name 
+FROM character 
+INNER JOIN character_actor 
+ON character.id = character_actor.character_id
+INNER JOIN actor
+ON character_actor.actor_id = actor.id;
+
+# returns a list of characters and TV shows that are not named "Willow Rosenberg" and not in the show "How I Met Your Mother"
+SELECT character.name, tv_show.name FROM character 
+INNER JOIN character_tv_show
+ON character.id = character_tv_show.character_id
+INNER JOIN tv_show
+ON character_tv_show.tv_show_id = tv_show.id
+WHERE character.name != 'Willow Rosenberg' AND tv_show.name != 'How I Met Your Mother'; 
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
