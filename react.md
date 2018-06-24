@@ -1,3 +1,61 @@
+From [React Tutorial](https://reactjs.org/tutorial/tutorial.html)
+
+## Tutorial: Intro To React
+
+### Before We Start
+
+#### What We're Building
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 From [freeCodeCamp](https://learn.freecodecamp.org/front-end-libraries/react)
 
 - React uses a syntax extension of JavaScript called JSX. Because JSX is a syntactic extension of JavaScript, you can actually write JavaScript directly within JSX. To do this, you simply include the code you want to be treated as JavaScript within curly braces: `{ 'this is treated as JavaScript code' }`. However, because JSX is not valid JavaScript, JSX code must be compiled into JavaScript. The transpiler Babel is a popular tool for this process. 
