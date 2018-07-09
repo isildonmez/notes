@@ -341,6 +341,109 @@ It accepts `author` (an object), `text` (a string), and `date` (a date) as props
 
 This component can be tricky to change because of all the nesting, and it is also hard to reuse individual parts of it. Let’s extract a few components from it.
 
+First, we will extract `Avatar`:
+
+```
+function Avatar(props) {
+	return (
+		<img className="Avatar"
+			src={props.user.avatarUrl}
+			alt={props.user.name}
+		/>
+	);
+}
+```
+
+The `Avatar` doesn’t need to know that it is being rendered inside a `Comment`. This is why we have given its prop a more generic name: `user` rather than `author`.
+
+We recommend naming props from the component’s own point of view rather than the context in which it is being used.
+
+Next, we will extract a `UserInfo` component that renders an `Avatar` next to the user’s name:
+
+```
+function UserInfo(props) {
+	return (
+		<div className="UserInfo">
+			<Avatar user={props.user} />
+			<div className="UserInfo-name">
+				{props.user.name}
+			</div>
+		</div>
+	);
+}
+```
+
+This lets us simplify `Comment`:
+
+```
+function Comment(props) {
+	return (
+		<div className="Comment">
+			<UserInfo user={props.author} />
+			<div className="Comment-text">
+				{props.text}
+			</div>
+			<div className="Comment-date">
+				{formatDate(props.date)}
+			</div>
+		</div>
+	);
+}
+```
+
+A good rule of thumb is that if a part of your UI is used several times (`Button`, `Panel`, `Avatar`), or is complex enough on its own (`App`, `FeedStory`, `Comment`), it is a good candidate to be a reusable component.
+
+### Props are Read-Only
+
+Whether you declare a component as a [function or a class](https://reactjs.org/docs/components-and-props.html#functional-and-class-components), it must never modify its own props. Consider this sum function:
+
+```
+function sum(a, b) {
+	return a + b;
+}
+```
+
+Such functions are called “[pure](https://en.wikipedia.org/wiki/Pure_function)” because they do not attempt to change their inputs, and always return the same result for the same inputs.
+
+In contrast, this function is impure because it changes its own input:
+
+```
+function withdraw(account, amount) {
+	account.total -= amount;
+}
+```
+
+React is pretty flexible but it has a single strict rule:
+
+**All React components must act like pure functions with respect to their props.**
+
+Of course, application UIs are dynamic and change over time. State allows React components to change their output over time in response to user actions, network responses, and anything else, without violating this rule.
+
+## 5. State and Lifecycle 
+
+This page introduces the concept of state and lifecycle in a React component. You can find a [detailed component API reference here](https://reactjs.org/docs/react-component.html).
+
+Consider the ticking clock example from [one of the previous sections](https://reactjs.org/docs/rendering-elements.html#updating-the-rendered-element). In [Rendering Elements](https://reactjs.org/docs/rendering-elements.html#rendering-an-element-into-the-dom), we have only learned one way to update the UI. We call `ReactDOM.render()` to change the rendered output.
+
+In this section, we will learn how to make the `Clock` component truly reusable and encapsulated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
