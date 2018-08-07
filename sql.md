@@ -152,12 +152,52 @@ ON character_tv_show.tv_show_id = tv_show.id
 WHERE character.name != 'Willow Rosenberg' AND tv_show.name != 'How I Met Your Mother'; 
 ```
 
+#### LIKE
 
+It is to search through text-based values.
+- The percent sign (`%`) represents zero, one, or multiple characters.
+- The underscore (`_`) represents one character.
+- Case insensitive.
 
+```
+# returns "Robot" followed by a year between 2000 and 2099? (So 2015 is a valid value at the end, but 2123 is not.) 
 
+SELECT * FROM robots WHERE name LIKE "%Robot 20__";
+```
 
+#### SUBSTR
 
+SUBSTR(column_name, index, number_of_characters)
 
+```
+SUBSTR(name, 1, 5) is the first 5 characters of the name. 
+SUBSTR(name, -4) is the last 4 characters of the name. 
+```
+
+```
+# returns all of the robots that have been released between 2000 and 2099.
+
+SELECT * FROM robots WHERE SUBSTR(name, -4) LIKE '20__';
+```
+
+Note: In other versions of SQL, you could use RIGHT to do this.
+
+#### COALESCE
+
+Takes a list of columns, and returns the value of the first column that is not null.
+
+id | name | gun | sword | tank
+--- | --- | --- | --- | --- |
+1 | US Marine | Colt 9mm SMG | Swiss Army Knife | M1A1 Abrams Tank
+2 | John Wilkes Booth | .44 caliber Derringer | null | null
+3 | Zorro | null | Sword of Zorro | null
+4 | Innocent Bystander | null | null | null
+
+```
+# Suppose we wanted to find the most powerful weapon that a combatant has on hand. If value of gun is not null, that is the value returned. Otherwise, the value of sword is returned. Then you would run: 
+
+SELECT name, COALESCE(gun, sword) as weapon FROM fighters;
+```
 
 
 

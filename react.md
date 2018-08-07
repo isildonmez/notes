@@ -556,7 +556,7 @@ If you need a refresher on JavaScript, we recommend reading [this guide](https:/
 
 
 
-
+-----
 
 From [freeCodeCamp](https://learn.freecodecamp.org/front-end-libraries/react)
 
