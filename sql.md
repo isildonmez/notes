@@ -199,8 +199,26 @@ id | name | gun | sword | tank
 SELECT name, COALESCE(gun, sword) as weapon FROM fighters;
 ```
 
+> From [SQLBolt](https://sqlbolt.com/lesson/introduction)
 
+#### Queries with Constraints
 
+```
+SELECT column FROM table WHERE col_name (NOT) BETWEEN 1.5 AND 10.5;
+SELECT column FROM table WHERE col_name (NOT) IN (2, 4, 6)
+SELECT column FROM table WHERE col_name (NOT) LIKE "TOY STOR_%";
+```
+
+#### Filtering and Sorting
+
+```
+SELECT DISTINCT column FROM table WHERE conditions;
+SELECT column FROM table WHERE conditions ORDER BY column ASC/DESC;
+SELECT column FROM table WHERE conditions ORDER BY column ASC/DESC LIMIT num_limit OFFSET num_offset;
+# LIMIT will reduce the number of rows to return, and the optional  OFFSET will specify where to begin counting the number rows from.
+SELECT DISTINCT Title FROM movies ORDER BY Title ASC LIMIT 5 OFFSET 5;
+# List the next five movies sorted alphabetically.
+```
 
 
 
