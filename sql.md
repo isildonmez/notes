@@ -220,13 +220,132 @@ SELECT DISTINCT Title FROM movies ORDER BY Title ASC LIMIT 5 OFFSET 5;
 # List the next five movies sorted alphabetically.
 ```
 
+---------
 
+> From [SQLBolt](https://sqlbolt.com/)
 
+### 2: Queries with constraints (Pt. 1)
 
+![img](images/sqlBolt_2.png)
 
+```
+SELECT *
+FROM Movies
+WHERE Year BETWEEN 1999 AND 2010;
+```
 
+### 3: Queries with constraints (Pt. 2)
 
+![img](images/sqlBolt_3.png)
 
+### 4. Filtering and sorting Query results
+
+```
+SELECT DISTINCT column, another_column, …
+FROM mytable
+WHERE condition(s);
+```
+
+```
+SELECT column, another_column, …
+FROM mytable
+WHERE condition(s)
+ORDER BY column ASC/DESC
+LIMIT num_limit OFFSET num_offset;
+```
+
+The LIMIT will reduce the number of rows to return, and the optional  OFFSET will specify where to begin counting the number rows from.
+
+```
+SELECT DISTINCT Director
+FROM movies
+ORDER BY Director ASC;
+# List all directors of Pixar movies (alphabetically), without duplicates
+```
+
+```
+SELECT Title
+FROM movies
+ORDER BY Year DESC
+LIMIT 4;
+# List the last four Pixar movies released (ordered from most recent to least)
+```
+
+```
+SELECT Title
+FROM movies
+ORDER BY Title ASC
+LIMIT 5 OFFSET 5;
+# List the next five Pixar movies sorted alphabetically
+```
+
+### 5. Simple SELECT Queries
+
+```
+SELECT City, Population
+FROM north_american_cities
+WHERE Country LIKE "CANADA";
+# List all the Canadian cities and their populations
+```
+
+```
+SELECT City, Latitude, Longitude
+FROM north_american_cities
+WHERE Country LIKE "United States%"
+ORDER BY Latitude DESC;
+# Order all the cities in the United States by their latitude from north to south
+```
+
+### 6. Multi-table queries with JOINs
+
+```
+SELECT column, another_table_column, …
+FROM mytable
+INNER JOIN another_table 
+    ON mytable.id = another_table.id
+WHERE condition(s)
+ORDER BY column, … ASC/DESC
+LIMIT num_limit OFFSET num_offset;
+```
+
+> You might see queries where the INNER JOIN is written simply as a  JOIN. These two are equivalent, but we will continue to refer to these joins as inner-joins because they make the query easier to read once you start using other types of joins, which will be introduced in the following lesson. 
+
+### 7. OUTER JOINs
+
+> You might see queries written these joins written as LEFT OUTER JOIN,  RIGHT OUTER JOIN, or  FULL OUTER JOIN, but the OUTER keyword is really kept for SQL-92 compatibility and these queries are simply equivalent to  LEFT JOIN, RIGHT JOIN, and FULL JOIN respectively.
+
+### 8. A short note on NULLs
+
+```
+SELECT column, another_column, …
+FROM mytable
+WHERE column IS/IS NOT NULL
+AND/OR another_condition
+AND/OR …;
+```
+
+### 9. Queries with expressions
+
+```
+SELECT column AS better_column_name, …
+FROM a_long_widgets_table_name AS mywidgets
+INNER JOIN widget_sales
+  ON mywidgets.id = widget_sales.widget_id;
+
+```
+
+```
+SELECT particle_speed / 2.0 AS half_particle_speed
+FROM physics_data
+WHERE ABS(particle_position) * 10.0 > 500;
+```
+
+```
+SELECT Title, (Domestic_sales + International_sales)/ 1000000 AS Combined_sales
+FROM movies
+LEFT JOIN Boxoffice
+ON Movies.id = Boxoffice.Movie_id;
+```
 
 
 
