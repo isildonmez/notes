@@ -347,6 +347,188 @@ LEFT JOIN Boxoffice
 ON Movies.id = Boxoffice.Movie_id;
 ```
 
+### 10. Queries with aggregates
+
+![img](images/sqlBolt_10.png)
+
+Find the longest time that an employee has been at the studio
+
+```
+SELECT MAX(Years_employed)
+FROM employees;
+```
+
+For each role, find the average number of years employed by employees in that role 
+
+```
+SELECT Role, AVG(Years_employed)
+FROM employees
+GROUP BY role;
+```
+
+Find the total number of employee years worked in each building
+
+```
+SELECT Building, SUM(Years_employed)
+FROM employees
+GROUP BY Building;
+```
+
+### 11. Queries with aggregates (Pt. 2)
+
+If the GROUP BY clause is executed after the WHERE clause (which filters the rows which are to be grouped), then how exactly do we filter the grouped rows?
+
+Luckily, SQL allows us to do this by adding an additional HAVING clause which is used specifically with the GROUP BY clause to allow us to filter grouped rows from the result set.
+
+```
+SELECT group_by_column, AGG_FUNC(column_expression) AS aggregate_result_alias, …
+FROM mytable
+WHERE condition
+GROUP BY column
+HAVING group_condition;
+```
+
+Find the number of Employees of each role in the studio:
+
+```
+SELECT Role, COUNT(*)
+FROM employees
+GROUP BY Role;
+```
+
+Find the total number of years employed by all Engineers
+
+```
+SELECT Role, SUM(Years_employed)
+FROM employees
+WHERE Role = 'Engineer';
+```
+
+### 12. Order of execution of a Query
+
+```
+SELECT DISTINCT column, AGG_FUNC(column_or_expression), …
+FROM mytable
+    JOIN another_table
+      ON mytable.column = another_table.column
+    WHERE constraint_expression
+    GROUP BY column
+    HAVING constraint_expression
+    ORDER BY column ASC/DESC
+    LIMIT count OFFSET COUNT;
+```
+
+Find the number of movies each director has directed
+
+```
+SELECT Director, Count(*)
+FROM movies
+GROUP BY Director;
+```
+
+Find the total domestic and international sales that can be attributed to each director:
+
+```
+SELECT Director, SUM(Domestic_sales + International_sales)
+FROM movies
+JOIN Boxoffice
+ON movies.Id = Boxoffice.Movie_id
+GROUP BY Director;
+```
+(There may be more than one rows for each director)
+
+### 13. Inserting rows
+
+**What is a Schema?**
+
+In SQL, the database schema is what describes the structure of each table, and the datatypes that each column of the table can contain.
+
+In some cases, if you have incomplete data and the table contains columns that support default values, you can insert rows with only the columns of data you have by specifying them explicitly.
+
+```
+INSERT INTO mytable
+(column, another_column, …)
+VALUES (value_or_expr, another_value_or_expr, …),
+      (value_or_expr_2, another_value_or_expr_2, …),
+      …;
+```
+
+### 14. Updating rows
+
+Most people working with SQL will make mistakes updating data at one point or another. Whether it's updating the wrong set of rows in a production database, or accidentally leaving out the WHERE clause (which causes the update to apply to all rows), you need to be extra careful when constructing UPDATE statements.
+
+One helpful tip is to always write the constraint first and test it in a SELECT query to make sure you are updating the right rows, and only then writing the column/value pairs to update.
+
+```
+UPDATE mytable
+SET column = value_or_expr, 
+    other_column = another_value_or_expr, 
+    …
+WHERE condition;
+```
+
+### 15. Deleting Rows
+
+```
+DELETE FROM mytable
+WHERE condition;
+```
+
+Like the UPDATE statement from last lesson, it's recommended that you run the constraint in a  SELECT query first to ensure that you are removing the right rows. Without a proper backup or test database, it is downright easy to irrevocably remove data, so always read your DELETE statements twice and execute once.
+
+### 16. Creating tables
+
+```
+CREATE TABLE IF NOT EXISTS mytable (
+    column DataType TableConstraint DEFAULT default_value,
+    another_column DataType TableConstraint DEFAULT default_value,
+    …
+);
+```
+
+![img](images/sqlBolt_16_1.png)
+
+![img](images/sqlBolt_16_2.png)
+
+Movies table schema
+
+```
+CREATE TABLE movies (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    director TEXT,
+    year INTEGER, 
+    length_minutes INTEGER
+);
+```
+
+### 17. Altering Tables
+
+```
+ALTER TABLE mytable
+ADD column DataType OptionalTableConstraint 
+    DEFAULT default_value;
+```
+
+```
+ALTER TABLE mytable
+DROP column_to_be_deleted;
+```
+
+```
+ALTER TABLE mytable
+RENAME TO new_table_name;
+```
+
+### 18. Dropping Tables
+
+```
+DROP TABLE IF EXISTS mytable;
+```
+
+If you have another table that is dependent on columns in table you are removing (for example, with a FOREIGN KEY dependency) then you will have to either update all dependent tables first to remove the dependent rows or to remove those tables entirely.
+
+
 
 
 
