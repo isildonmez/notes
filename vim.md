@@ -3,6 +3,7 @@
 #### Surviving your first week
 
 - Run `$ vimtutor` in your shell to do some practice.
+- Please keep in mind vimtutor for more commands.
 
 ![cheatsheet](images/vimCheatsheet.png)
 
