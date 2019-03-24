@@ -29,4 +29,17 @@ Z shell is case insensitive.
 
 With zsh, you can just hit the command key, then click on the URL.
 
-> To install and configure zsh please visit the [link](https://sunlightmedia.org/bash-vs-zsh/)
+### Setting zsh as default
+
+```
+chsh -s /bin/zsh
+```
+
+### Configuring zsh
+
+> Oh My ZSH: To install run `curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh` Check themes from [here](https://github.com/robbyrussell/oh-my-zsh/wiki/themes)
+
+
+> Recommend [Prezto](https://github.com/sorin-ionescu/prezto)
+
+
