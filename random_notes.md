@@ -17,3 +17,9 @@ Conventional SQL database managements systems aren't really designed for full-te
 Redis keys are binary safe, this means that you can use any binary sequence as a key, from a string like "foo" to the content of a JPEG file. The empty string is also a valid key.
 
 - Try to stick with a schema. For instance "object-type:id" is a good idea, as in "user:1000". Dots or dashes are often used for multi-word fields, as in "comment:1234:reply.to" or "comment:1234:reply-to".
+
+### Github vs Bitbucket
+
+- **Github** offers unlimited free repositories (with colloboration) for open-source repos while charging for private repos. **Bitbucket** allows unlimited free private repos while charging for more than a certain number of collaborators.
+
+- **Gitlab** offers a hosted version as well, and unlimited public and private repos.
